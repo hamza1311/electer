@@ -10,9 +10,9 @@
     let username;
     let password;
 
-    const signIn = async () => {
+    const signInOrUp = async (inOrUp: 'in' | 'up') => {
         console.log(username.value, password.value)
-        const res = await fetch('/api/auth/signin', {
+        const res = await fetch(`/api/auth/sign${inOrUp}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -29,10 +29,8 @@
         console.log('payload', payload)
         dispatch('signedIn', payload)
     }
-
-    const signUp = () => {
-        console.log(username.value, password.value)
-    }
+    const signIn = () => signInOrUp('in')
+    const signUp = () => signInOrUp('up')
 </script>
 
 <mwc-tab-bar on:MDCTabBar:activated={onTabSelect}>

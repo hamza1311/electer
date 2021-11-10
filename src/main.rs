@@ -75,6 +75,7 @@ async fn main() {
         )
         .layer(AddExtensionLayer::new(app_state));
 
+    let port = std::env::var("PORT").ok().and_then(|it| it.parse::<u16>().ok()).unwrap_or(8000);
     let dist_dir = std::env::var("DIST_DIR").unwrap_or_else(|_| "./dist".to_string());
 
     let app = Router::new()
@@ -88,7 +89,7 @@ async fn main() {
             }),
         );
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 8000));
+    let addr = SocketAddr::from(([127, 0, 0, 1], port));
     tracing::info!("listening on {}", addr);
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
