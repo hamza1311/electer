@@ -1,0 +1,7 @@
+/target
+.idea
+.env
+dist/
+
+# commands for local debugging and stuff
+*-cmd*

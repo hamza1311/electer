@@ -1,0 +1,146 @@
+name: Test & Build
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  backend:
+    name: Build backend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+
+      - uses: actions/cache@v2
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: cargo-${{ runner.os }}-backend-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: |
+            cargo-${{ runner.os }}-backend
+            cargo-${{ runner.os }}-
+
+# TODO add tests
+#      - name: Test backend
+#        uses: actions-rs/cargo@v1
+#        env:
+#          SQLX_OFFLINE: true
+#          TEST_DATABASE_URL: postgresql://waichu:password@localhost:5432/waichu
+#        with:
+#          command: test
+#          args: --release -p backend -- --test-threads 1
+
+      - name: Build backend
+        uses: actions-rs/cargo@v1
+        env:
+          SQLX_OFFLINE: true
+        with:
+          command: build
+          args: --release
+
+      - name: Tar backend file
+        run: |
+          mkdir artifacts
+          cp target/release/electer artifacts/electer
+          tar -cvf backend.tar artifacts
+
+      - name: Upload backend binary artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: backend
+          path: backend.tar
+
+  frontend:
+    runs-on: ubuntu-latest
+    name: Build frontend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: cd frontend && npm install
+
+      - name: Build frontend
+        run: cd frontend && npm run build
+
+      - name: Tar dist directory
+        run: |
+          tar -cvf frontend.tar frontend/dist
+
+      - name: Upload frontend artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: frontend
+          path: frontend.tar
+
+  build:
+    runs-on: ubuntu-latest
+    needs:
+      - backend
+      - frontend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Download backend atrifact
+        uses: actions/download-artifact@v2
+        with:
+          name: backend
+
+      - name: Untar backend binary
+        run: |
+          tar -xvf backend.tar
+
+      - name: Download frontend atrifact
+        uses: actions/download-artifact@v2
+        with:
+          name: frontend
+
+      - name: Untar dist directory
+        run: |
+          tar -xvf frontend.tar
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.CR_PAT }}
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: Dockerfile.workflow
+          push: true
+          tags: ghcr.io/hamza1311/waichu:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}

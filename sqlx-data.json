@@ -1,0 +1,333 @@
+{
+  "db": "PostgreSQL",
+  "19bc7cb3fba4c8e476574385b676dbe3588f7bdac51bd116752defd4435d7790": {
+    "query": "\n    select id, text\n    from poll_options\n    where poll_id = $1;\n    ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "text",
+          "type_info": "Text"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false,
+        false
+      ]
+    }
+  },
+  "3415537001cbbdc4d7bd1a27eb44afc2c955c3a62142a682d9438dc53dec0461": {
+    "query": "\nselect count(option), option\nfrom votes\nwhere poll = $1\ngroup by option;\n    ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "count",
+          "type_info": "Int8"
+        },
+        {
+          "ordinal": 1,
+          "name": "option",
+          "type_info": "Uuid"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        null,
+        false
+      ]
+    }
+  },
+  "38bf2f5c4a7bb4eaae5bd6511a02e912759a253a9917f1584603ee53a21a8a4f": {
+    "query": "\n            INSERT INTO users(id, username, password) VALUES\n            ($1, $2, $3)\n            returning *;\n        ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "username",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 2,
+          "name": "password",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 3,
+          "name": "create_time",
+          "type_info": "Timestamptz"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Text",
+          "Text"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "62a39d1e79a0a703a2a147a99eedca717adc807fc6793472a03fee982eede49a": {
+    "query": "\ninsert into polls (id, title, creator)\nvalues ($1, $2, $3)\nreturning id;\n    ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Text",
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false
+      ]
+    }
+  },
+  "7b0dfc09d332aa2a0d285fb72fcac41d9948ca0aced23b15006504e29ee3316e": {
+    "query": "\n        select *\n        from users\n        where username = $1;\n        ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "username",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 2,
+          "name": "password",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 3,
+          "name": "create_time",
+          "type_info": "Timestamptz"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Text"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "7cc00ff164ad27e71f3bd52be2fa459ce83260b9657f645ad96f33d741cb13b8": {
+    "query": "\n        select *\n        from users\n        where id = $1;\n        ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "username",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 2,
+          "name": "password",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 3,
+          "name": "create_time",
+          "type_info": "Timestamptz"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        false,
+        false,
+        false,
+        false
+      ]
+    }
+  },
+  "83b15494ad3c93a220a78bdc9f52f8b6850fa07b79de3b24666a0099bb283a18": {
+    "query": "\nSELECT *\nFROM polls_view\nORDER BY poll_create_time DESC\nLIMIT $1;\n    ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "poll_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "poll_title",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 2,
+          "name": "poll_create_time",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 3,
+          "name": "user_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 4,
+          "name": "user_username",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 5,
+          "name": "user_password",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 6,
+          "name": "user_create_time",
+          "type_info": "Timestamptz"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Int8"
+        ]
+      },
+      "nullable": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "8832d41d25144a41be1be21c74d553ff71e57685fd518b4fdba97b5365581828": {
+    "query": "\nSELECT *\nFROM polls_view\nWHERE poll_id = $1;\n    ",
+    "describe": {
+      "columns": [
+        {
+          "ordinal": 0,
+          "name": "poll_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 1,
+          "name": "poll_title",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 2,
+          "name": "poll_create_time",
+          "type_info": "Timestamptz"
+        },
+        {
+          "ordinal": 3,
+          "name": "user_id",
+          "type_info": "Uuid"
+        },
+        {
+          "ordinal": 4,
+          "name": "user_username",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 5,
+          "name": "user_password",
+          "type_info": "Text"
+        },
+        {
+          "ordinal": 6,
+          "name": "user_create_time",
+          "type_info": "Timestamptz"
+        }
+      ],
+      "parameters": {
+        "Left": [
+          "Uuid"
+        ]
+      },
+      "nullable": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  },
+  "8b16bf0b87ed2c00052cd4dc005541929a58516e0de64dd3f9b9997e1f395bac": {
+    "query": "\n            insert into poll_options (id, poll_id, text)\n            values ($1, $2, $3);\n        ",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Uuid",
+          "Text"
+        ]
+      },
+      "nullable": []
+    }
+  },
+  "e40734670452e7eed711926ed468c87cbb54648d843abf65ce68d849c0986f7c": {
+    "query": "\ninsert into votes (voter, poll, option)\nvalues ($1, $2, $3);\n    ",
+    "describe": {
+      "columns": [],
+      "parameters": {
+        "Left": [
+          "Uuid",
+          "Uuid",
+          "Uuid"
+        ]
+      },
+      "nullable": []
+    }
+  }
+}
