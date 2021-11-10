@@ -1,5 +1,4 @@
 /target
 frontend/node_modules
-dist
 .env
 
