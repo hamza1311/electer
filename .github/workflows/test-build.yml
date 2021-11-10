@@ -131,8 +131,6 @@ jobs:
           file: Dockerfile.workflow
           push: true
           tags: ghcr.io/hamza1311/electer:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
