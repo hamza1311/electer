@@ -37,6 +37,11 @@ async fn main() {
 
     let pool = PgPool::connect(DATABASE_URL).await.unwrap();
 
+    sqlx::migrate!("./migrations")
+        .run(&pool)
+        .await
+        .expect("failed to apply migrations");
+
     let app_state = AppState { pool: pool.clone() };
 
     let auth = Router::new()
