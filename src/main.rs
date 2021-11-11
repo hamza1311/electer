@@ -34,8 +34,9 @@ async fn main() {
     tracing_subscriber::fmt::init();
 
     let _ = &*auth::ENCODING_KEY;
-
-    let pool = PgPool::connect(DATABASE_URL).await.unwrap();
+    let database_url = std::env::var("DATABASE_URL");
+    let database_url = database_url.as_deref().unwrap_or(DATABASE_URL);
+    let pool = PgPool::connect(database_url).await.unwrap();
 
     sqlx::migrate!("./migrations")
         .run(&pool)
