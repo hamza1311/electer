@@ -81,19 +81,22 @@ async fn main() {
         )
         .layer(AddExtensionLayer::new(app_state));
 
-    let port = std::env::var("PORT").ok().and_then(|it| it.parse::<u16>().ok()).unwrap_or(8000);
-    let dist_dir = std::env::var("DIST_DIR").unwrap_or_else(|_| "./dist".to_string());
+    let port = std::env::var("PORT")
+        .ok()
+        .and_then(|it| it.parse::<u16>().ok())
+        .unwrap_or(8000);
 
-    let app = Router::new()
-        .nest("/api", api)
-        .fallback(
-            axum::routing::service_method_routing::get(ServeDir::new(dist_dir)).handle_error(|e| {
-                (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    format!("Unhandled internal error: {}", e),
-                )
-            }),
-        );
+    let dist_dir = std::env::var("DIST_DIR");
+    let dist_dir = dist_dir.as_deref().unwrap_or("./frontend/dist");
+
+    let app = Router::new().nest("/api", api).fallback(
+        axum::routing::service_method_routing::get(ServeDir::new(dist_dir)).handle_error(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                format!("Unhandled internal error: {}", e),
+            )
+        }),
+    );
 
     let addr = SocketAddr::from(([127, 0, 0, 1], port));
     tracing::info!("listening on {}", addr);

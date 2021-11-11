@@ -39,8 +39,8 @@
 </mwc-tab-bar>
 
 <div class="inputs-container">
-    <mwc-textfield label="Username" bind:this={username}/>
-    <mwc-textfield label="Password" bind:this={password}/>
+    <mwc-textfield label="Username" bind:this={username} />
+    <mwc-textfield label="Password" bind:this={password} type="password"/>
 
     {#if activeIndex === 0}
         <mwc-button on:click={signIn}>Sign In</mwc-button>
