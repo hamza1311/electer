@@ -4,9 +4,7 @@ A voting app to allow users to vote on, given multiple choices. It uses [`axum`]
 the backend and [`Svelte`](https://svelte.dev/) on the frontend using [`Vite`](https://vitejs.dev/) build tool. It
 uses `PostgreSQL` as the database.
 
-You can find a hosted version [here](https://electer.mhamza.dev/)
-
-## Self-hosting
+## Hosting
 
 You can build this app in 2 ways:
 
